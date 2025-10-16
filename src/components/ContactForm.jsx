@@ -3,48 +3,64 @@ import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { sendContactEmail } from "../utils/emailService";
 
-
 const ContactSchema = Yup.object().shape({
-  name: Yup.string().required("Required"),
-  email: Yup.string().email("Invalid email").required("Required"),
-  message: Yup.string().min(10,"Too short").required("Required")
+  name: Yup.string().required("Name is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  phone: Yup.string(),
+  message: Yup.string().min(10, "Message must be at least 10 characters").required("Message is required")
 });
 
-export default function ContactForm(){
-  const [status, setStatus] = useState("");
-
+export default function ContactForm({ showToast }) {
   return (
     <Formik
-      initialValues={{ name:"", email:"", message:"" }}
+      initialValues={{ name: "", email: "", phone: "", message: "" }}
       validationSchema={ContactSchema}
       onSubmit={async (values, actions) => {
-        setStatus("Sending...");
         const res = await sendContactEmail(values);
-        if(res.ok){
-          setStatus("Message sent — we will contact you soon.");
+        if (res.ok) {
+          showToast("Message sent successfully! We'll contact you soon.", "success");
           actions.resetForm();
         } else {
-          setStatus("Error sending message — try again later.");
+          showToast("Failed to send message. Please try again.", "error");
         }
       }}
     >
-      {({ errors, touched }) => (
+      {({ errors, touched, isSubmitting }) => (
         <Form>
-          <label>Name</label>
-          <Field name="name" />
-          {errors.name && touched.name && <div style={{color:"crimson"}}>{errors.name}</div>}
+          <div className="form-group">
+            <label htmlFor="name">Name *</label>
+            <Field id="name" name="name" />
+            {errors.name && touched.name && <span className="form-error">{errors.name}</span>}
+          </div>
 
-          <label style={{marginTop:8}}>Email</label>
-          <Field name="email" type="email" />
-          {errors.email && touched.email && <div style={{color:"crimson"}}>{errors.email}</div>}
+          <div className="form-group">
+            <label htmlFor="email">Email *</label>
+            <Field id="email" name="email" type="email" />
+            {errors.email && touched.email && <span className="form-error">{errors.email}</span>}
+          </div>
 
-          <label style={{marginTop:8}}>Message</label>
-          <Field name="message" as="textarea" rows="4" />
-          {errors.message && touched.message && <div style={{color:"crimson"}}>{errors.message}</div>}
+          <div className="form-group">
+            <label htmlFor="phone">Phone</label>
+            <Field id="phone" name="phone" type="tel" />
+          </div>
 
-          <div className="form-actions" style={{marginTop:8}}>
-            <button className="btn" type="submit">Send Message</button>
-            <div style={{alignSelf:"center",marginLeft:12}}>{status}</div>
+          <div className="form-group">
+            <label htmlFor="message">Message *</label>
+            <Field id="message" name="message" as="textarea" rows="4" />
+            {errors.message && touched.message && <span className="form-error">{errors.message}</span>}
+          </div>
+
+          <div className="form-actions">
+            <button className="btn" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <span className="spinner"></span>
+                  {" "}Sending...
+                </>
+              ) : (
+                "Send Message"
+              )}
+            </button>
           </div>
         </Form>
       )}

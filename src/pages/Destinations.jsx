@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
+import { useWeather } from "../hooks/useWeather";
 
 const defaultCities = [
   { name: "Nairobi", lat: -1.286389, lon: 36.817223 },
@@ -7,54 +7,38 @@ const defaultCities = [
   { name: "Kisumu", lat: -0.091702, lon: 34.7680 }
 ];
 
-export default function Destinations(){
-  const [weather, setWeather] = useState({});
-  const key = import.meta.env.VITE_OPENWEATHER_KEY;
-
-  useEffect(()=>{
-    async function fetchAll(){
-      if(!key){
-        console.warn("OpenWeather key missing — showing placeholder data");
-        setWeather({
-          Nairobi: { temp: 24, desc: "Partly cloudy" },
-          Mombasa: { temp: 29, desc: "Sunny" },
-          Kisumu: { temp: 23, desc: "Showers" }
-        });
-        return;
-      }
-      try {
-        const results = {};
-        for(const c of defaultCities){
-          const res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${c.lat}&lon=${c.lon}&units=metric&appid=${key}`);
-          results[c.name] = {
-            temp: Math.round(res.data.main.temp),
-            desc: res.data.weather[0].description
-          };
-        }
-        setWeather(results);
-      } catch(e){
-        console.error(e);
-      }
-    }
-    fetchAll();
-  }, [key]);
+export default function Destinations() {
+  const { weather, loading, error } = useWeather(defaultCities);
 
   return (
     <section className="section container" data-aos="fade-up">
       <h2>Destinations & Weather</h2>
-      <p className="muted">Quick weather snapshot for popular destinations.</p>
+      <p className="muted" style={{ textAlign: "center" }}>Real-time weather updates for popular destinations</p>
 
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:12,marginTop:12}}>
-        {Object.keys(weather).length === 0 ? (
-          <div className="service-card">Loading...</div>
+      {error && <div className="form-error" style={{ textAlign: "center", marginTop: "var(--sp-lg)" }}>Unable to load weather data</div>}
+
+      <div className="services-grid" style={{ marginTop: "var(--sp-xl)" }}>
+        {loading ? (
+          <div style={{ textAlign: "center", gridColumn: "1/-1", padding: "var(--sp-xl)" }}>
+            <div className="spinner"></div>
+            <p className="muted" style={{ marginTop: "var(--sp-md)" }}>Loading weather...</p>
+          </div>
+        ) : Object.keys(weather).length === 0 ? (
+          <div className="empty-state">No weather data available</div>
         ) : (
-          Object.entries(weather).map(([city,data])=>(
-            <div key={city} className="service-card">
-              <h3 style={{margin:0}}>{city}</h3>
-              <div style={{marginTop:8,fontWeight:800,color:"var(--orange)"}}>{data.temp}°C</div>
-              <div className="muted" style={{marginTop:6}}>{data.desc}</div>
-              <div style={{marginTop:10}}><a className="small-btn" href={`https://www.google.com/search?q=things+to+do+in+${city}`} target="_blank" rel="noreferrer">Travel tips</a></div>
-            </div>
+          Object.entries(weather).map(([city, data]) => (
+            <article key={city} className="card">
+              <h3 style={{ marginBottom: "var(--sp-md)" }}>{city}</h3>
+              <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--orange)", marginBottom: "var(--sp-md)" }}>
+                {data.temp}°C
+              </div>
+              <p className="muted" style={{ marginBottom: "var(--sp-md)", textTransform: "capitalize" }}>
+                {data.desc}
+              </p>
+              <a className="btn secondary" href={`https://www.google.com/search?q=things+to+do+in+${city}`} target="_blank" rel="noreferrer">
+                Travel Tips
+              </a>
+            </article>
           ))
         )}
       </div>

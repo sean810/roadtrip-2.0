@@ -1,31 +1,38 @@
 import React from "react";
 
-export default function About(){
-  const values = ["Accountability","Responsibility","Professionalism","Teamwork","Integrity","Dedication"];
+export default function About() {
+  const values = ["Accountability", "Responsibility", "Professionalism", "Teamwork", "Integrity", "Dedication"];
+
   return (
     <section className="section container" data-aos="fade-up">
-      <h2>About Us</h2>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 420px",gap:20,alignItems:"center"}}>
-        <div>
-          <p>We are a corporate travel company offering quality and professional transport services: long term hire, short term hire, chauffeur driven hire, and courier services. Our vehicles are clean and well maintained and all our drivers are fully qualified.</p>
+      <h2>About RoadTrip</h2>
 
-          <div style={{marginTop:16}}>
-            <h3>Mission</h3>
-            <p>Our mission is to see all our clients happy and satisfied with the excellent services they experience from us and in return getting many referral clients.</p>
-            <h3>Vision</h3>
-            <p>We aspire to be the most preferred travel company providing reliable, professional and efficient services to all our clients.</p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 420px", gap: "var(--sp-xl)", alignItems: "center", marginTop: "var(--sp-xl)" }}>
+        <div>
+          <p>
+            We are a leading corporate travel company offering quality and professional transport services. With over a decade of experience, we've built our reputation on reliability, professionalism, and customer satisfaction.
+          </p>
+
+          <div style={{ marginTop: "var(--sp-xl)" }}>
+            <h3>Our Mission</h3>
+            <p>To deliver exceptional travel experiences and logistics solutions that exceed customer expectations, ensuring satisfaction through professional service and reliable performance.</p>
+
+            <h3 style={{ marginTop: "var(--sp-xl)" }}>Our Vision</h3>
+            <p>To be the most preferred travel and courier company in East Africa, known for reliability, innovation, and uncompromising service quality.</p>
           </div>
 
-          <h3 style={{marginTop:12}}>Core Values</h3>
-          <div style={{display:"flex",flexWrap:"wrap",gap:8,marginTop:8}}>
-            {values.map((v,i)=>(
-              <div key={i} style={{background:"#fff",padding:"8px 10px",borderRadius:8,boxShadow:"0 8px 22px rgba(0,30,60,.04)",fontWeight:700}}>{v}</div>
+          <h3 style={{ marginTop: "var(--sp-xl)" }}>Core Values</h3>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--sp-md)", marginTop: "var(--sp-md)" }}>
+            {values.map((v, i) => (
+              <div key={i} className="filter-chip">
+                {v}
+              </div>
             ))}
           </div>
         </div>
 
-        <div style={{borderRadius:12,overflow:"hidden",height:320}}>
-          <img src="/images/hero-road-1.jpg" alt="Road view" style={{width:"100%",height:"100%",objectFit:"cover"}} />
+        <div className="frame">
+          <img src="/images/hero-road-1.jpg" alt="RoadTrip Team" />
         </div>
       </div>
     </section>
